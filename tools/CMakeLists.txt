@@ -377,6 +377,7 @@ if ("${JNI_FOUND}" AND "${Java_FOUND}")
 
   # decoder_jni_onload.cc might be necessary for Android; not used yet.
   add_library(jxl_jni SHARED jni/org/jpeg/jpegxl/wrapper/decoder_jni.cc)
+  add_library(jxl_jni SHARED jni/org/jpeg/jpegxl/wrapper/encoder_jni.cc)
   target_include_directories(jxl_jni PRIVATE "${JNI_INCLUDE_DIRS}" "${PROJECT_SOURCE_DIR}")
   target_link_libraries(jxl_jni PUBLIC jxl_dec-static jxl_threads-static)
 
@@ -387,11 +388,16 @@ if ("${JNI_FOUND}" AND "${Java_FOUND}")
     jni/org/jpeg/jpegxl/wrapper/PixelFormat.java
     jni/org/jpeg/jpegxl/wrapper/Status.java
     jni/org/jpeg/jpegxl/wrapper/StreamInfo.java
+    # TODO Add encoder source files here
+    jni/org.jpeg/jpegxl/wrapper/EncoderJni.java
+    jni/org.jpeg/jpegxl/wrapper/Encoder.java
   )
   get_target_property(JXL_JNI_WRAPPER_JAR jxl_jni_wrapper JAR_FILE)
 
   add_jar(jxl_jni_wrapper_test
-    SOURCES jni/org/jpeg/jpegxl/wrapper/DecoderTest.java
+    SOURCES
+      jni/org/jpeg/jpegxl/wrapper/DecoderTest.java
+      jni/org/jpeg/jpegxl/wrapper/EncoderTest.java
     INCLUDE_JARS jxl_jni_wrapper
   )
   get_target_property(JXL_JNI_WRAPPER_TEST_JAR jxl_jni_wrapper_test JAR_FILE)
@@ -401,11 +407,18 @@ if ("${JNI_FOUND}" AND "${Java_FOUND}")
     #     "which java" or JAVA_HOME environment variable point to the path like
     #     "/usr/lib/jvm/java-xx-openjdk-yyy" on Debian Linux).
     add_test(
-      NAME test_jxl_jni_wrapper
+      NAME test_jxl_jni_decoder_wrapper
       COMMAND ${Java_JAVA_EXECUTABLE}
               -cp "${JXL_JNI_WRAPPER_JAR}:${JXL_JNI_WRAPPER_TEST_JAR}"
               -Dorg.jpeg.jpegxl.wrapper.lib=$<TARGET_FILE:jxl_jni>
               org.jpeg.jpegxl.wrapper.DecoderTest
+    )
+    add_test(
+      NAME test_jxl_jni_encoder_wrapper
+      COMMAND ${Java_JAVA_EXECUTABLE}
+              -cp "${JXL_JNI_WRAPPER_JAR}:${JXL_JNI_WRAPPER_TEST_JAR}"
+              -Dorg.jpeg.jpegxl.wrapper.lib=$<TARGET_FILE:jxl_jni>
+              org.jpeg.jpegxl.wrapper.EncoderTest
     )
   endif()  # JPEGXL_ENABLE_FUZZERS
 endif()  # JNI_FOUND & Java_FOUND
