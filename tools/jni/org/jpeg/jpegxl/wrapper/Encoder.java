@@ -1,3 +1,8 @@
+// Copyright (c) the JPEG XL Project Authors. All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package org.jpeg.jpegxl.wrapper;
 
 import java.nio.Buffer;
@@ -9,11 +14,11 @@ public class Encoder {
     private Encoder() {}
     
     /** One-shot encoding. */
-    public static ImageData encode(Buffer pixels) {
+    public static ImageData encode(Buffer pixels, int width, int height) {
 
-        PixelFormat pixelFormat = PixelFormat.RGBA_8888; // TODO change to gray(?)
+        PixelFormat pixelFormat = PixelFormat.GRAY;
 
-        StreamInfo basicInfo = EncoderJni.getBasicInfo(pixels, pixelFormat);
+        StreamInfo basicInfo = EncoderJni.getBasicInfo(pixels, width, height, pixelFormat);
         if (basicInfo.status != Status.OK) {
             throw new IllegalStateException("Encoding failed");
         }

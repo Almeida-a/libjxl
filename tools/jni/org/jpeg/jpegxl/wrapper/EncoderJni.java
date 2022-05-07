@@ -24,7 +24,7 @@ class EncoderJni {
       case 1:
         return Status.NOT_ENOUGH_INPUT;
       default:
-        throw new IllegalStateException("Unknown status code");
+        throw new IllegalStateException(String.format("Unknown status code: %d", statusCode));
     }
   }
 
@@ -60,14 +60,19 @@ class EncoderJni {
   /** Utility library, disable object construction. */
   private EncoderJni() {}
 
-  public static StreamInfo getBasicInfo(Buffer pixels, PixelFormat pixelFormat) {
+  public static StreamInfo getBasicInfo(Buffer pixels, int width, int height, PixelFormat pixelFormat) {
+
     if (!pixels.isDirect()) {
       throw new IllegalArgumentException("PixelData must be direct buffer");
     }
     int[] context = new int[6];
-    context[0] = (pixelFormat == null) ? -1 : pixelFormat.ordinal();
-    // TODO get the rest of context info from nativeGetBasicInfo(pixels)
-
+    context[0] = (pixelFormat == null) ? -1 : 0; // 0 for now
+    context[1] = width;
+    context[2] = height;
+    context[3] = 8;  // number of bits
+    context[4] = 0;  // iccSize
+    context[5] = 0;  // alphaBits
+    
     return makeStreamInfo(context);
   }
 }

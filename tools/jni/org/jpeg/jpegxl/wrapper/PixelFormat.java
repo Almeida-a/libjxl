@@ -9,5 +9,6 @@ public enum PixelFormat {
   RGBA_8888, // 0
   RGBA_F16, // 1
   RGB_888, // 2
-  RGB_F16 // 3
+  RGB_F16, // 3
+  GRAY
 }

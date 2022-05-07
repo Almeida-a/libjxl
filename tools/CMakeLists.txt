@@ -376,12 +376,12 @@ if ("${JNI_FOUND}" AND "${Java_FOUND}")
   include(UseJava)
 
   # decoder_jni_onload.cc might be necessary for Android; not used yet.
-  add_library(jxl_jni SHARED jni/org/jpeg/jpegxl/wrapper/decoder_jni.cc)
-  add_library(jxl_jni SHARED jni/org/jpeg/jpegxl/wrapper/encoder_jni.cc)
+  add_library(jxl_jni SHARED jni/org/jpeg/jpegxl/wrapper/encoder_jni.cc
+                              jni/org/jpeg/jpegxl/wrapper/decoder_jni.cc)
   target_include_directories(jxl_jni PRIVATE "${JNI_INCLUDE_DIRS}" "${PROJECT_SOURCE_DIR}")
-  target_link_libraries(jxl_jni PUBLIC jxl_dec-static jxl_threads-static)
+  target_link_libraries(jxl_jni PUBLIC jxl-static jxl_dec-static jxl_threads-static)
 
-  add_jar(jxl_jni_wrapper
+  add_jar(jxl_jni_wrapper SOURCES
     jni/org/jpeg/jpegxl/wrapper/Decoder.java
     jni/org/jpeg/jpegxl/wrapper/DecoderJni.java
     jni/org/jpeg/jpegxl/wrapper/ImageData.java
@@ -389,10 +389,15 @@ if ("${JNI_FOUND}" AND "${Java_FOUND}")
     jni/org/jpeg/jpegxl/wrapper/Status.java
     jni/org/jpeg/jpegxl/wrapper/StreamInfo.java
     # TODO Add encoder source files here
-    jni/org.jpeg/jpegxl/wrapper/EncoderJni.java
-    jni/org.jpeg/jpegxl/wrapper/Encoder.java
+    jni/org/jpeg/jpegxl/wrapper/EncoderJni.java
+    jni/org/jpeg/jpegxl/wrapper/Encoder.java
+    OUTPUT_NAME org.jpeg.jpegxl
   )
   get_target_property(JXL_JNI_WRAPPER_JAR jxl_jni_wrapper JAR_FILE)
+  if(NOT DEFINED JPEGXL_INSTALL_JARDIR)
+    set(JPEGXL_INSTALL_JARDIR ${CMAKE_INSTALL_LIBDIR})
+  endif()
+  install_jar(jxl_jni_wrapper DESTINATION ${JPEGXL_INSTALL_JARDIR})
 
   add_jar(jxl_jni_wrapper_test
     SOURCES

@@ -42,7 +42,7 @@ int ToStatusCode(const jxl::Status& status) {
   return 1;  // Non-fatal -> not enough input.
 }
 
-constexpr const size_t kLastPixelFormat = 3;
+constexpr const size_t kLastPixelFormat = 4;
 // constexpr const size_t kNoPixelFormat = static_cast<size_t>(-1);
 
 jxl::Status DoEncode(JNIEnv* env, jobject data_buffer, size_t* info_pixels_size,
